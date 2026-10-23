@@ -8,27 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c469527fa58f472c",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph-Ansicht"
-            }
-          },
-          {
             "id": "3822c7cdcad466c5",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph-Ansicht"
+              "type": "markdown",
+              "state": {
+                "file": "Ordner Struktur.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Ordner Struktur"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -195,10 +188,14 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "0d0d6f515cb0e2c1",
+  "active": "3822c7cdcad466c5",
   "lastOpenFiles": [
-    "Neuer Link.md",
+    "Architekturplanung & Code Styleguide.md",
+    "Ordner Struktur.md",
     "Unbenannt.canvas",
+    "GAME DESIGN DOKUMENT/Unbenannt.canvas",
+    "GAME DESIGN DOKUMENT",
+    "Neuer Link.md",
     "test.md",
     "Willkommen.md"
   ]
