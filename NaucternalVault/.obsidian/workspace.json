@@ -84,7 +84,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "\"![[Pasted image 20261026181253.png]]\"",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -219,9 +219,11 @@
   },
   "active": "ccf851292c9098b9",
   "lastOpenFiles": [
-    "Pasted image 20261026181253.png",
-    "Plannung 26.10.2026.md",
+    "Quantic Foundry quiz.md",
     "Persona.md",
+    "Plannung 26.10.2026.md",
+    "Screenshot 2026-10-26 181218.png",
+    "Pasted image 20261026181253.png",
     "Unbenannt",
     "Ordner Struktur.md",
     "Architekturplanung & Code Styleguide.md",
