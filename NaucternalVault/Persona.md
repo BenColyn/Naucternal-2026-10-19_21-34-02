@@ -19,7 +19,7 @@
 
 **Hintergrund & Motivation zum Spielen:** Seit kleinem an liebt sie das Meer und studiert nun Meeresbiologie. 
 
-**Frustrationserlebnisse beim Spielen:** Kein Feedback wenn man Schaden erleitet oder verursacht (Soll also Visuell und/oder Akkustisch klar sichtbar sein was passiert)
+**Frustrationserlebnisse beim Spielen:** Kein Feedback wenn man Schaden erleidet oder verursacht (Soll also Visuell und/oder Akkustisch klar sichtbar sein was passiert)
 
 **Painpoints beim Spielen:** Movement was sich nicht flüssig anfühlt (Steuerung mit Animation stimmen überein), Der Vibe nicht zum Spiel passt (Musik, Farben, Gegner nicht zueinander passen)
 

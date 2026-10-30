@@ -4,8 +4,8 @@
 - UI/GUI 
 - Enemy AI
 - Player Controller
-- Map generation
-- Tutorial Map
+- Map generation [[Die Map]]
+- Tutorial Map [[Die Map]]
 - erstellen der Räume
 - Animation
 - VFX
