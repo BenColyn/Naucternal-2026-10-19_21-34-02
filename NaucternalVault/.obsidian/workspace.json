@@ -109,12 +109,14 @@
             "id": "f40746c2e19a65ca",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "PS5R_PsySo.png"
+                "file": "Aufgabenverteilung (Art).md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "PS5R_PsySo"
+              "icon": "lucide-file",
+              "title": "Aufgabenverteilung (Art)"
             }
           }
         ],
@@ -287,15 +289,15 @@
   },
   "active": "f40746c2e19a65ca",
   "lastOpenFiles": [
-    "GamePlay Loop.md",
+    "Die Map.md",
     "PS5R_PsySo.png",
+    "GamePlay Loop.md",
     "Screenshot 2026-10-26 181218.png",
     "Persona.md",
     "Aufgabenverteilung (Programmer).md",
     "Aufgabenverteilung (Art).md",
     "Architekturplanung & Code Styleguide.md",
     "Ordner Struktur.md",
-    "Die Map.md",
     "2026-10-30.md",
     "Plannung 26.10.2026.md",
     "Quantic Foundry quiz.md",
