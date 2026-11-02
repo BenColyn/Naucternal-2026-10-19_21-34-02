@@ -8,7 +8,7 @@ public class RoomNode
     public string id;
     public RoomType type;
     public Vector2Int size; // Z.B. (2,2) für klein, (4,3) für groß
-    public Vector2Int gridPosition; // Speichert die echte Raster-Koordinate
+    public Vector2 gridPosition; // Speichert die echte Raster-Koordinate
 
     // Die Kanten: Welche Räume sind direkt mit diesem verbunden?
     public List<RoomNode> connectedRooms = new List<RoomNode>();
