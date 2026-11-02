@@ -1,24 +1,33 @@
 [[Aufgabenverteilung (Art)]]
-- Hauptmenü
-- Settings Menü
-- UI/GUI 
-- Enemy AI
-- Player Controller
-- Map generation [[Die Map]]
-- Tutorial Map [[Die Map]]
-- erstellen der Räume
-- Animation
-- VFX
-- Sound
+
+
+
+
+- erstellen der Räume (Alle)
+- Animation (Später im Projekt) 
+- VFX (Auch später im Projekt)
+- Sound (Maurice wird geknechtet)
+
 
 Justus
 
+- Player Controller
+- Tutorial Map [[Die Map]]
+
 Ben J.
+
+- Map generation [[Die Map]]
 
 Jimmy
 
+- UI/GUI 
+- Shader
+
 Kaan
 
+- Enemy AI
+ 
 Ben C. 
 
-
+- Hauptmenü
+- Settings Menü

@@ -1,4 +1,3 @@
-
 **Tutorial:**
 
 Ein Raum Movement erklärt.
@@ -15,4 +14,3 @@ Dieser Weg soll erschwert werden durch Gegner und gelegentlich Toren die verschl
 
 
 Die Räume haben mind einen Eingang und Ausgang (Eingang kann auch Ausgang sein(Deadend)). 
-
