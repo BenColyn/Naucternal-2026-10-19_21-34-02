@@ -345,7 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc52e1e305621a4b9ee8d320e0100ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DungeonManager
-  targetRoomCount: 50
+  targetRoomCount: 60
 --- !u!4 &1985830445
 Transform:
   m_ObjectHideFlags: 0
