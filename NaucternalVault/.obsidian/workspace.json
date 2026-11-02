@@ -11,10 +11,12 @@
             "id": "0bc6bdf7c7e0e3aa",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "Neuer Tab"
+              "type": "image",
+              "state": {
+                "file": "Screenshot 2026-10-26 181218.png"
+              },
+              "icon": "lucide-image",
+              "title": "Screenshot 2026-10-26 181218"
             }
           }
         ]
@@ -186,10 +188,13 @@
   },
   "active": "0bc6bdf7c7e0e3aa",
   "lastOpenFiles": [
+    "(GDC) Game Design Concept/GamePlay Loop.md",
+    "Screenshot 2026-10-26 181218.png",
+    "PS5R_PsySo.png",
+    "Plannung 26.10.2026.md",
     "(GPD) Game Programming Document/Enemy/Enemy AI.md",
     "(GPD) Game Programming Document/Die Map/Map (generell).md",
     "(GPD) Game Programming Document/Architekturplanung & Code Styleguide.md",
-    "Plannung 26.10.2026.md",
     "(GAD) Game Art Document",
     "(GPD) Game Programming Document/Enemy",
     "(GPD) Game Programming Document/Enemy.md",
@@ -199,9 +204,6 @@
     "Projektmanagment/Aufgabenverteilung (Art).md",
     "(GPD) Game Programming Document/Ordner Struktur.md",
     "(GDC) Game Design Concept/Persona.md",
-    "(GDC) Game Design Concept/GamePlay Loop.md",
-    "PS5R_PsySo.png",
-    "Screenshot 2026-10-26 181218.png",
     "(GPD) Game Programming Document",
     "(GDC) Game Design Concept/Quantic Foundry quiz.md",
     "(GDC) Game Design Concept",
