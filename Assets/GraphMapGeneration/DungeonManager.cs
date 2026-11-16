@@ -28,6 +28,7 @@ public class DungeonManager : MonoBehaviour
             foreach (var neighbor in node.connectedRooms)
             {
                 Gizmos.DrawLine(node.gridPosition, neighbor.gridPosition);
+
             }
         }
 
