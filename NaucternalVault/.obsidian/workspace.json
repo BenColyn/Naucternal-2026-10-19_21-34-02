@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
+                "file": "Plannung 26.10.2026.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Enemy (Anglerfisch)"
+              "title": "Plannung 26.10.2026"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
+                "file": "Plannung 26.10.2026.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
+                "file": "Plannung 26.10.2026.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
+                "file": "Plannung 26.10.2026.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -190,9 +190,15 @@
   },
   "active": "f28c73530d8238c2",
   "lastOpenFiles": [
+    "Eingefügte Bilder/PS5R_PsySo.png",
+    "Plannung 26.10.2026.md",
+    "Eingefügte Bilder/Screenshot 2026-10-26 181218.png",
+    "Eingefügte Bilder/Pasted image 20261106132124.png",
+    "Eingefügte Bilder",
+    "(GPD) Game Programming Document/Enemy/Enemy AI.md",
+    "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
     "(GAD) Game Art Document/Enemies/Enemy (Sea Bunny).md",
     "(GAD) Game Art Document/Enemies/Enemy (Sea Dragon).md",
-    "(GAD) Game Art Document/Enemies/Tutorial Enemy (Mondfisch).md",
-    "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md"
+    "(GAD) Game Art Document/Enemies/Tutorial Enemy (Mondfisch).md"
   ]
 }
