@@ -1,56 +1,24 @@
 {
   "main": {
-    "id": "773715ffe2651f65",
+    "id": "2dcdcc9748d96e0b",
     "type": "split",
     "children": [
       {
-        "id": "6f8219db11b5a9d0",
+        "id": "0f4f15378afd6396",
         "type": "tabs",
         "children": [
           {
-            "id": "cc9ad3853a3539e1",
+            "id": "f28c73530d8238c2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "(GAD) Game Art Document/Enemies/Tutorial Enemy (Mondfisch).md",
+                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-<<<<<<< Updated upstream
-              "title": "Tutorial Enemy (Mondfisch)"
-=======
-              "title": "Player Controller"
-            }
-          },
-          {
-            "id": "6aa129309c802d79",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "(GPD) Game Programming Document/Player Controller.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Player Controller"
-            }
-          },
-          {
-            "id": "b61be595a61df658",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "(GPD) Game Programming Document/Enemy/Enemy AI.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Enemy AI"
->>>>>>> Stashed changes
+              "title": "Enemy (Anglerfisch)"
             }
           }
         ]
@@ -59,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "3820cbf6e921fa57",
+    "id": "4014add7af194ec5",
     "type": "split",
     "children": [
       {
-        "id": "de5094e64d74c401",
+        "id": "1b323acf53088cf7",
         "type": "tabs",
         "children": [
           {
-            "id": "0d0d6f515cb0e2c1",
+            "id": "02591d2b26852973",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -78,16 +46,16 @@
                 "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
-              "title": "Files"
+              "title": "Dateiexplorer"
             }
           },
           {
-            "id": "dd7746574bce9f07",
+            "id": "9c449025da690932",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "\"![[Pasted image 20261026181253.png]]\"",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -99,7 +67,7 @@
             }
           },
           {
-            "id": "12f966e423c86309",
+            "id": "86b0e27df8551ca7",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -118,20 +86,20 @@
     "width": 300
   },
   "right": {
-    "id": "14f06940b01d0c86",
+    "id": "f85dac58be55fade",
     "type": "split",
     "children": [
       {
-        "id": "d32ec6d255d2c538",
+        "id": "fbfb81475cce539e",
         "type": "tabs",
         "children": [
           {
-            "id": "8e54d63cb4d057ab",
+            "id": "f819fe53dd566955",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Willkommen.md",
+                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -145,12 +113,12 @@
             }
           },
           {
-            "id": "3ada25677aa5c4ef",
+            "id": "ff3741557b07b4e6",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Willkommen.md",
+                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -159,7 +127,7 @@
             }
           },
           {
-            "id": "349984e5c02c6def",
+            "id": "53d2f12be5fb79a3",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -174,7 +142,7 @@
             }
           },
           {
-            "id": "c4fdb19e5210946c",
+            "id": "c1fe89a518d16f82",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -188,12 +156,12 @@
             }
           },
           {
-            "id": "4806c8b0aa148e70",
+            "id": "c5406a7afe96e923",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Willkommen.md",
+                "file": "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -211,70 +179,20 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "switcher:Schnellauswahl öffnen": false,
+      "graph:Graph-Ansicht öffnen": false,
+      "canvas:Neuen Canvas erstellen": false,
+      "daily-notes:Heutige Notiz öffnen": false,
+      "templates:Vorlage einfügen": false,
+      "command-palette:Befehlspalette öffnen": false,
+      "bases:Neue Base erstellen": false
     }
   },
-  "active": "cc9ad3853a3539e1",
+  "active": "f28c73530d8238c2",
   "lastOpenFiles": [
-<<<<<<< Updated upstream
-    "(GAD) Game Art Document/Enemies/Enemy (Sea Dragon).md",
     "(GAD) Game Art Document/Enemies/Enemy (Sea Bunny).md",
-    "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md",
+    "(GAD) Game Art Document/Enemies/Enemy (Sea Dragon).md",
     "(GAD) Game Art Document/Enemies/Tutorial Enemy (Mondfisch).md",
-    "Pasted image 20261116112955.png",
-    "Pasted image 20261116112934.png",
-    "Pasted image 20261116112925.png",
-    "Pasted image 20261116112738.png",
-    "Pasted image 20261116112451.png",
-    "Pasted image 20261116112238.png",
-    "Pasted image 20261116111851.png",
-    "Pasted image 20261116111825.png",
-    "(GAD) Game Art Document/Enemies/Untitled.base",
-    "(GAD) Game Art Document/Enemies/Enemy (Sea Dragon).canvas",
-    "(GPD) Game Programming Document/Player Controller.md",
-=======
-    "(GPD) Game Programming Document/Die Map/Map (generell).md",
-    "(GPD) Game Programming Document/Player Controller.md",
-    "Projektmanagment/Aufgabenverteilung (Programmer).md",
-    "Projektmanagment/Aufgabenverteilung (Art).md",
-    "(GPD) Game Programming Document/Architekturplanung & Code Styleguide.md",
-    "(GAD) Game Art Document/Enemies/Tutorial Enemy.md",
-    "Pasted image 20261106132231.png",
-    "Pasted image 20261106132124.png",
-    "(GAD) Game Art Document/Enemies",
-    "(GDD) Game Design Document/Mechaniken Tabelle (Prio Liste).md",
->>>>>>> Stashed changes
-    "Screenshot 2026-10-26 181218.png",
-    "Pasted image 20261106132231.png",
-    "(GAD) Game Art Document/Enemies",
-    "(GDD) Game Design Document/Mechaniken Tabelle (Prio Liste).md",
-    "(GDC) Game Design Concept/GamePlay Loop.md",
-    "Plannung 26.10.2026.md",
-    "(GPD) Game Programming Document/Enemy/Enemy AI.md",
-    "(GAD) Game Art Document",
-    "(GPD) Game Programming Document/Enemy",
-    "(GPD) Game Programming Document/Enemy.md",
-    "(GPD) Game Programming Document/Die Map",
-    "(GPD) Game Programming Document/Die Map.md",
-    "(GPD) Game Programming Document/Ordner Struktur.md",
-    "(GDC) Game Design Concept/Persona.md",
-    "(GPD) Game Programming Document",
-    "(GDC) Game Design Concept/Quantic Foundry quiz.md",
-    "(GDC) Game Design Concept",
-    "(GDD) Game Design Document/Unbenannt",
-    "(GDD) Game Design Document",
-    "Projektmanagment",
-    "2026-10-30.md",
-    "Unbenannt.canvas",
-    "GAME DESIGN DOKUMENT/Unbenannt.canvas",
-    "Neuer Link.md",
-    "test.md",
-    "Willkommen.md"
+    "(GAD) Game Art Document/Enemies/Enemy (Anglerfisch).md"
   ]
 }
