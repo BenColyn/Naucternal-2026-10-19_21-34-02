@@ -20,12 +20,12 @@ Ben J.
 
 Jimmy
 
-- UI/GUI 
+- Enemy AI [[Enemy AI]]
 - Shader
 
 Kaan
 
-- Enemy AI
+- UI/GUI 
  
 Ben C. 
 

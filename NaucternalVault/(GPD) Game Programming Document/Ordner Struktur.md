@@ -1,6 +1,22 @@
 
 -Assets
 
+	-Prefabs
+	
+		 -Components
+
+			-Traps
+
+			-Walls
+
+		-Structures
+	
+			-Tutorial
+			
+			-Rooms
+			
+			-Corridors
+
 	-Player
 
 		-Scripts
@@ -14,7 +30,7 @@
 	-Enemy
 
 		-Scripts
-
+		
 		-Art
 
 		-Animations
