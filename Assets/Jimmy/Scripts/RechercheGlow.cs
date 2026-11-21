@@ -5,21 +5,23 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class RechercheGlow : MonoBehaviour
 {
-    [SerializeField] private Color glowColor = new Color(0.25f, 0.85f, 1f, 1f);
+    [SerializeField] private Color fogColor = new Color(0.012f, 0.028f, 0.05f, 1f);
 
-    [SerializeField] [Range(0f, 1f)] private float opacity = 0.85f;
+    [Tooltip("How opaque the deep-sea fog is outside the clear circle.")]
+    [SerializeField] [Range(0f, 1f)] private float opacity = 0.97f;
 
-    [Tooltip("World size of the glow. A wider X keeps the halo elliptical.")]
-    [SerializeField] private Vector2 size = new Vector2(3.2f, 1.2f);
+    [Tooltip("World size of the fog quad. It must stay larger than the camera view.")]
+    [SerializeField] private float coverSize = 30f;
 
-    [Tooltip("Distance below the character. Positive values move the glow downward.")]
-    [SerializeField] private float verticalOffset = 1.15f;
+    [Tooltip("World radius around the character that stays visible.")]
+    [SerializeField] private float viewRadius = 4f;
 
     private SpriteRenderer spriteRenderer;
     private MaterialPropertyBlock propertyBlock;
 
-    private static readonly int GlowColorId = Shader.PropertyToID("_GlowColor");
+    private static readonly int FogColorId = Shader.PropertyToID("_FogColor");
     private static readonly int OpacityId = Shader.PropertyToID("_Opacity");
+    private static readonly int RadiusId = Shader.PropertyToID("_Radius");
 
     private void OnEnable()
     {
@@ -47,17 +49,18 @@ public class RechercheGlow : MonoBehaviour
         if (spriteRenderer == null)
             return;
 
-        size.x = Mathf.Max(0.01f, size.x);
-        size.y = Mathf.Max(0.01f, size.y);
-        verticalOffset = Mathf.Max(0f, verticalOffset);
+        coverSize = Mathf.Max(1f, coverSize);
+        viewRadius = Mathf.Clamp(viewRadius, 0.2f, coverSize * 0.45f);
 
-        transform.localScale = new Vector3(size.x, size.y, 1f);
-        transform.localPosition = new Vector3(0f, -verticalOffset, 0f);
+        transform.localScale = new Vector3(coverSize, coverSize, 1f);
+        transform.localPosition = Vector3.zero;
 
         spriteRenderer.color = Color.white;
+        spriteRenderer.sortingOrder = 1;
         spriteRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor(GlowColorId, glowColor);
+        propertyBlock.SetColor(FogColorId, fogColor);
         propertyBlock.SetFloat(OpacityId, opacity);
+        propertyBlock.SetFloat(RadiusId, viewRadius / coverSize);
         spriteRenderer.SetPropertyBlock(propertyBlock);
     }
 }

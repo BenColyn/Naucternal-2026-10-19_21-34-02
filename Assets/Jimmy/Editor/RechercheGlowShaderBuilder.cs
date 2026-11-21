@@ -15,35 +15,204 @@ public static class RechercheGlowShaderBuilder
 {
     private const string ShaderPath = "Assets/Jimmy/Art/RechercheGlow.shadergraph";
     private const string MaterialPath = "Assets/Jimmy/Art/RechercheGlow.mat";
+    private const string SeaShaderPath = "Assets/Jimmy/Art/DeepSeaBackdrop.shadergraph";
+    private const string SeaMaterialPath = "Assets/Jimmy/Art/DeepSeaBackdrop.mat";
     private const string PrefabPath = "Assets/Player/MC.prefab";
     private const string ScenePath = "Assets/Scenes/RechercheUnderwaterTest.unity";
     private const string CapsulePath = "Packages/com.unity.2d.sprite/Editor/ObjectMenuCreation/DefaultAssets/Textures/v2/Capsule.png";
     private const string SquarePath = "Packages/com.unity.2d.sprite/Editor/ObjectMenuCreation/DefaultAssets/Textures/v2/Square.png";
     private const string PreviewDirectory = "Logs";
 
-    private static readonly Color GlowColor = new Color(0.25f, 0.85f, 1f, 1f);
-    private const float GlowOpacity = 0.85f;
-    private static readonly Vector2 GlowSize = new Vector2(3.2f, 1.2f);
-    private const float GlowOffset = 1.15f;
+    private static readonly Color FogColor = new Color(0.012f, 0.028f, 0.05f, 1f);
+    private static readonly Color DeepColor = new Color(0.03f, 0.09f, 0.16f, 1f);
+    private static readonly Color MistColor = new Color(0.1f, 0.2f, 0.28f, 1f);
+    private static readonly Color ShadowColor = new Color(0.008f, 0.03f, 0.06f, 1f);
+    private const float FogOpacity = 0.97f;
+    private const float CoverSize = 30f;
+    private const float ViewRadius = 4f;
 
-    [MenuItem("Naucternal/Build Recherche Glow")]
-    public static void Build()
+    [MenuItem("Naucternal/Apply Deep Sea Vision")]
+    public static void ApplyDeepSeaVision()
     {
-        var shader = CreateShaderGraph();
-        var material = CreateMaterial(shader);
-        var prefab = CreatePrefab(material);
-        var sceneCamera = CreateScene(prefab);
-        Verify(sceneCamera, prefab);
-        Debug.Log("Recherche glow shader, prefab, and underwater test scene are ready.");
+        var glowShader = CreateVisionShader();
+        var glowMaterial = CreateMaterial(glowShader, MaterialPath, "RechercheGlow");
+        var seaShader = CreateSeaShader();
+        var seaMaterial = CreateMaterial(seaShader, SeaMaterialPath, "DeepSeaBackdrop");
+        UpdatePrefab(glowMaterial);
+        var camera = UpdateScene(seaMaterial);
+        VerifyVision(camera);
+        Debug.Log("Deep sea vision glow is ready.");
     }
 
-    private static Shader CreateShaderGraph()
+    private static Shader CreateVisionShader()
     {
-        var shaderGraph = Assembly.Load("Unity.ShaderGraph.Editor");
-        var urp = Assembly.Load("Unity.RenderPipelines.Universal.Editor");
-        var graphType = shaderGraph.GetType("UnityEditor.ShaderGraph.GraphData");
-        var graph = Activator.CreateInstance(graphType);
+        var graph = BeginSpriteGraph(out var shaderGraph, out var graphType);
+        var fogProperty = AddColor(shaderGraph, graphType, graph, "FogColor", FogColor);
+        var opacityProperty = AddFloat(shaderGraph, graphType, graph, "Opacity", FogOpacity);
+        var radiusProperty = AddFloat(shaderGraph, graphType, graph, "Radius", ViewRadius / CoverSize);
+        RequireNames(fogProperty, "_FogColor", opacityProperty, "_Opacity", radiusProperty, "_Radius");
+        var fog = CreatePropertyNode(shaderGraph, graphType, graph, fogProperty);
+        var opacity = CreatePropertyNode(shaderGraph, graphType, graph, opacityProperty);
+        var radius = CreatePropertyNode(shaderGraph, graphType, graph, radiusProperty);
 
+        var distance = CreateDistance(shaderGraph, graphType, graph, out var uvNode);
+        var noise = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.GradientNoiseNode");
+        var noiseAmount = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+        var innerFactor = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+        var noisyDistance = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.AddNode");
+        var noiseScale = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MultiplyNode");
+        var innerRadius = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MultiplyNode");
+        var smoothstep = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SmoothstepNode");
+        var fogAlpha = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MultiplyNode");
+
+        SetVector1(noiseAmount, 0.02f);
+        SetVector1(innerFactor, 0.72f);
+        Connect(shaderGraph, graphType, graph, uvNode, 0, noise, 0);
+        Connect(shaderGraph, graphType, graph, noise, 2, noiseScale, 0);
+        Connect(shaderGraph, graphType, graph, noiseAmount, 0, noiseScale, 1);
+        Connect(shaderGraph, graphType, graph, distance, 1, noisyDistance, 0);
+        Connect(shaderGraph, graphType, graph, noiseScale, 2, noisyDistance, 1);
+        Connect(shaderGraph, graphType, graph, radius, 0, innerRadius, 0);
+        Connect(shaderGraph, graphType, graph, innerFactor, 0, innerRadius, 1);
+        Connect(shaderGraph, graphType, graph, innerRadius, 2, smoothstep, 0);
+        Connect(shaderGraph, graphType, graph, radius, 0, smoothstep, 1);
+        Connect(shaderGraph, graphType, graph, noisyDistance, 2, smoothstep, 2);
+        Connect(shaderGraph, graphType, graph, smoothstep, 3, fogAlpha, 0);
+        Connect(shaderGraph, graphType, graph, opacity, 0, fogAlpha, 1);
+
+        var baseColor = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.BaseColor");
+        var alphaBlock = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.Alpha");
+        Connect(shaderGraph, graphType, graph, fog, 0, baseColor, 0);
+        Connect(shaderGraph, graphType, graph, fogAlpha, 2, alphaBlock, 0);
+        return SaveGraph(shaderGraph, graphType, graph, ShaderPath);
+    }
+
+    private static Shader CreateSeaShader()
+    {
+        var graph = BeginSpriteGraph(out var shaderGraph, out var graphType);
+        var deepProperty = AddColor(shaderGraph, graphType, graph, "DeepColor", DeepColor);
+        var mistProperty = AddColor(shaderGraph, graphType, graph, "MistColor", MistColor);
+        var shadowProperty = AddColor(shaderGraph, graphType, graph, "ShadowColor", ShadowColor);
+        var scrollProperty = AddFloat(shaderGraph, graphType, graph, "Scroll", 0f);
+        RequireNames(deepProperty, "_DeepColor", mistProperty, "_MistColor", shadowProperty, "_ShadowColor", scrollProperty, "_Scroll");
+        var deep = CreatePropertyNode(shaderGraph, graphType, graph, deepProperty);
+        var mist = CreatePropertyNode(shaderGraph, graphType, graph, mistProperty);
+        var shadow = CreatePropertyNode(shaderGraph, graphType, graph, shadowProperty);
+        var scroll = CreatePropertyNode(shaderGraph, graphType, graph, scrollProperty);
+
+        var uv = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.UVNode");
+        var split = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SplitNode");
+        var combine = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.CombineNode");
+        var scrollYFactor = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+        var scrollY = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MultiplyNode");
+        var scrollVector = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.CombineNode");
+        var scrolled = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.AddNode");
+        var noise = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.GradientNoiseNode");
+        var heightLerp = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LerpNode");
+        var hazeLerp = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LerpNode");
+        var silhouette = CreateSilhouette(shaderGraph, graphType, graph, split);
+        var shadowLerp = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LerpNode");
+        var opaque = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+
+        SetVector1(scrollYFactor, 0.35f);
+        SetVector1(opaque, 1f);
+        Connect(shaderGraph, graphType, graph, uv, 0, split, 0);
+        Connect(shaderGraph, graphType, graph, split, 1, combine, 0);
+        Connect(shaderGraph, graphType, graph, split, 2, combine, 1);
+        Connect(shaderGraph, graphType, graph, scroll, 0, scrollY, 0);
+        Connect(shaderGraph, graphType, graph, scrollYFactor, 0, scrollY, 1);
+        Connect(shaderGraph, graphType, graph, scroll, 0, scrollVector, 0);
+        Connect(shaderGraph, graphType, graph, scrollY, 2, scrollVector, 1);
+        Connect(shaderGraph, graphType, graph, combine, 6, scrolled, 0);
+        Connect(shaderGraph, graphType, graph, scrollVector, 6, scrolled, 1);
+        Connect(shaderGraph, graphType, graph, scrolled, 2, noise, 0);
+        Connect(shaderGraph, graphType, graph, deep, 0, heightLerp, 0);
+        Connect(shaderGraph, graphType, graph, mist, 0, heightLerp, 1);
+        Connect(shaderGraph, graphType, graph, split, 2, heightLerp, 2);
+        Connect(shaderGraph, graphType, graph, heightLerp, 3, hazeLerp, 0);
+        Connect(shaderGraph, graphType, graph, mist, 0, hazeLerp, 1);
+        Connect(shaderGraph, graphType, graph, noise, 2, hazeLerp, 2);
+        Connect(shaderGraph, graphType, graph, hazeLerp, 3, shadowLerp, 0);
+        Connect(shaderGraph, graphType, graph, shadow, 0, shadowLerp, 1);
+        Connect(shaderGraph, graphType, graph, silhouette, 2, shadowLerp, 2);
+
+        var baseColor = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.BaseColor");
+        var alphaBlock = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.Alpha");
+        Connect(shaderGraph, graphType, graph, shadowLerp, 3, baseColor, 0);
+        Connect(shaderGraph, graphType, graph, opaque, 0, alphaBlock, 0);
+        return SaveGraph(shaderGraph, graphType, graph, SeaShaderPath);
+    }
+
+    private static object CreateDistance(Assembly shaderGraph, Type graphType, object graph, out object uvNode)
+    {
+        uvNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.UVNode");
+        var split = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SplitNode");
+        var combine = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.CombineNode");
+        var center = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector2Node");
+        var subtract = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SubtractNode");
+        var length = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LengthNode");
+        SetVector2(center, new Vector2(0.5f, 0.5f));
+        Connect(shaderGraph, graphType, graph, uvNode, 0, split, 0);
+        Connect(shaderGraph, graphType, graph, split, 1, combine, 0);
+        Connect(shaderGraph, graphType, graph, split, 2, combine, 1);
+        Connect(shaderGraph, graphType, graph, combine, 6, subtract, 0);
+        Connect(shaderGraph, graphType, graph, center, 0, subtract, 1);
+        Connect(shaderGraph, graphType, graph, subtract, 2, length, 0);
+        return length;
+    }
+
+    private static object CreateSilhouette(Assembly shaderGraph, Type graphType, object graph, object split)
+    {
+        var first = CreateBlob(shaderGraph, graphType, graph, split, new Vector2(0.46f, 0.5f), 0.015f, 0.055f);
+        var second = CreateBlob(shaderGraph, graphType, graph, split, new Vector2(0.56f, 0.44f), 0.02f, 0.07f);
+        var third = CreateBlob(shaderGraph, graphType, graph, split, new Vector2(0.4f, 0.58f), 0.012f, 0.05f);
+        var maxFirst = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MaximumNode");
+        var maxAll = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MaximumNode");
+        Connect(shaderGraph, graphType, graph, first, 1, maxFirst, 0);
+        Connect(shaderGraph, graphType, graph, second, 1, maxFirst, 1);
+        Connect(shaderGraph, graphType, graph, maxFirst, 2, maxAll, 0);
+        Connect(shaderGraph, graphType, graph, third, 1, maxAll, 1);
+        return maxAll;
+    }
+
+    private static object CreateBlob(
+        Assembly shaderGraph,
+        Type graphType,
+        object graph,
+        object split,
+        Vector2 center,
+        float inner,
+        float outer)
+    {
+        var uv = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.CombineNode");
+        var point = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector2Node");
+        var subtract = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SubtractNode");
+        var length = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LengthNode");
+        var innerNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+        var outerNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
+        var smoothstep = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SmoothstepNode");
+        var inverted = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.OneMinusNode");
+        SetVector2(point, center);
+        SetVector1(innerNode, inner);
+        SetVector1(outerNode, outer);
+        Connect(shaderGraph, graphType, graph, split, 1, uv, 0);
+        Connect(shaderGraph, graphType, graph, split, 2, uv, 1);
+        Connect(shaderGraph, graphType, graph, uv, 6, subtract, 0);
+        Connect(shaderGraph, graphType, graph, point, 0, subtract, 1);
+        Connect(shaderGraph, graphType, graph, subtract, 2, length, 0);
+        Connect(shaderGraph, graphType, graph, innerNode, 0, smoothstep, 0);
+        Connect(shaderGraph, graphType, graph, outerNode, 0, smoothstep, 1);
+        Connect(shaderGraph, graphType, graph, length, 1, smoothstep, 2);
+        Connect(shaderGraph, graphType, graph, smoothstep, 3, inverted, 0);
+        return inverted;
+    }
+
+    private static object BeginSpriteGraph(out Assembly shaderGraph, out Type graphType)
+    {
+        shaderGraph = Assembly.Load("Unity.ShaderGraph.Editor");
+        var urp = Assembly.Load("Unity.RenderPipelines.Universal.Editor");
+        graphType = shaderGraph.GetType("UnityEditor.ShaderGraph.GraphData");
+        var graph = Activator.CreateInstance(graphType);
         Invoke(graphType, graph, "AddContexts");
 
         var targetType = urp.GetType("UnityEditor.Rendering.Universal.ShaderGraph.UniversalTarget");
@@ -63,110 +232,132 @@ public static class RechercheGlowShaderBuilder
         Invoke(graphType, graph, "InitializeOutputs", targets, CreateSpriteBlocks(shaderGraph));
         Invoke(graphType, graph, "AddCategory", CreateDefaultCategory(shaderGraph));
         graphType.GetProperty("path").SetValue(graph, "Shader Graphs");
+        return graph;
+    }
 
-        var colorProperty = CreateColorProperty();
-        var opacityProperty = CreateOpacityProperty();
-        Invoke(graphType, graph, "AddGraphInput", colorProperty, -1);
-        Invoke(graphType, graph, "AddGraphInput", opacityProperty, -1);
-
-        if (colorProperty.referenceName != "_GlowColor" || opacityProperty.referenceName != "_Opacity")
-        {
-            throw new InvalidOperationException(
-                "Unexpected shader property names: " + colorProperty.referenceName + ", " + opacityProperty.referenceName);
-        }
-
-        var colorNode = CreatePropertyNode(shaderGraph, graphType, graph, colorProperty);
-        var opacityNode = CreatePropertyNode(shaderGraph, graphType, graph, opacityProperty);
-        var uvNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.UVNode");
-        var splitNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SplitNode");
-        var combineNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.CombineNode");
-        var centerNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector2Node");
-        var subtractNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SubtractNode");
-        var lengthNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.LengthNode");
-        var innerNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
-        var outerNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.Vector1Node");
-        var smoothstepNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.SmoothstepNode");
-        var oneMinusNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.OneMinusNode");
-        var multiplyNode = CreateNode(shaderGraph, graphType, graph, "UnityEditor.ShaderGraph.MultiplyNode");
-
-        SetVector2(centerNode, new Vector2(0.5f, 0.5f));
-        SetVector1(innerNode, 0.02f);
-        SetVector1(outerNode, 0.48f);
-
-        // UV.xy - 0.5 keeps the distance circular. OneMinus flips smoothstep so the center stays opaque
-        // and the falloff reaches zero before the square border.
-        Connect(shaderGraph, graphType, graph, uvNode, 0, splitNode, 0);
-        Connect(shaderGraph, graphType, graph, splitNode, 1, combineNode, 0);
-        Connect(shaderGraph, graphType, graph, splitNode, 2, combineNode, 1);
-        Connect(shaderGraph, graphType, graph, combineNode, 6, subtractNode, 0);
-        Connect(shaderGraph, graphType, graph, centerNode, 0, subtractNode, 1);
-        Connect(shaderGraph, graphType, graph, subtractNode, 2, lengthNode, 0);
-        Connect(shaderGraph, graphType, graph, innerNode, 0, smoothstepNode, 0);
-        Connect(shaderGraph, graphType, graph, outerNode, 0, smoothstepNode, 1);
-        Connect(shaderGraph, graphType, graph, lengthNode, 1, smoothstepNode, 2);
-        Connect(shaderGraph, graphType, graph, smoothstepNode, 3, oneMinusNode, 0);
-        Connect(shaderGraph, graphType, graph, oneMinusNode, 1, multiplyNode, 0);
-        Connect(shaderGraph, graphType, graph, opacityNode, 0, multiplyNode, 1);
-
-        var baseColor = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.BaseColor");
-        var alpha = FindBlock(shaderGraph, graphType, graph, "SurfaceDescription.Alpha");
-        Connect(shaderGraph, graphType, graph, colorNode, 0, baseColor, 0);
-        Connect(shaderGraph, graphType, graph, multiplyNode, 2, alpha, 0);
+    private static Shader SaveGraph(Assembly shaderGraph, Type graphType, object graph, string path)
+    {
         Invoke(graphType, graph, "ValidateGraph");
-
-        Place(uvNode, -1400f, 200f);
-        Place(splitNode, -1160f, 200f);
-        Place(combineNode, -920f, 200f);
-        Place(centerNode, -920f, 40f);
-        Place(subtractNode, -680f, 160f);
-        Place(lengthNode, -440f, 160f);
-        Place(innerNode, -440f, 360f);
-        Place(outerNode, -440f, 480f);
-        Place(smoothstepNode, -180f, 240f);
-        Place(oneMinusNode, 80f, 240f);
-        Place(multiplyNode, 320f, 240f);
-        Place(opacityNode, 80f, 40f);
-        Place(colorNode, 320f, -80f);
-
-        Directory.CreateDirectory(Path.GetDirectoryName(ShaderPath) ?? "Assets");
+        Directory.CreateDirectory(Path.GetDirectoryName(path) ?? "Assets");
         var fileUtilities = shaderGraph.GetType("UnityEditor.ShaderGraph.FileUtilities");
-        var written = fileUtilities.GetMethod("WriteShaderGraphToDisk").Invoke(null, new object[] { ShaderPath, graph }) as string;
+        var written = fileUtilities.GetMethod("WriteShaderGraphToDisk").Invoke(null, new object[] { path, graph }) as string;
         if (string.IsNullOrEmpty(written))
-            throw new InvalidOperationException("Could not write the shader graph.");
+            throw new InvalidOperationException("Could not write " + path);
 
-        AssetDatabase.ImportAsset(ShaderPath, ImportAssetOptions.ForceUpdate);
-        var shader = AssetDatabase.LoadAssetAtPath<Shader>(ShaderPath);
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+        var shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
         if (shader == null)
-            throw new InvalidOperationException("The shader graph did not import as a shader.");
+            throw new InvalidOperationException(path + " did not import as a shader.");
 
         if (ShaderUtil.ShaderHasError(shader))
         {
             var messages = ShaderUtil.GetShaderMessages(shader);
             var details = string.Join("\n", messages.Select(message => message.message));
-            throw new InvalidOperationException("Recherche glow shader failed to compile.\n" + details);
+            throw new InvalidOperationException(path + " failed to compile.\n" + details);
         }
 
         return shader;
     }
 
-    private static Material CreateMaterial(Shader shader)
+    private static Material CreateMaterial(Shader shader, string path, string materialName)
     {
-        if (!HasShaderProperty(shader, "_GlowColor") || !HasShaderProperty(shader, "_Opacity"))
-            throw new InvalidOperationException("Recherche glow shader is missing _GlowColor or _Opacity.");
-
-        var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
+        var material = AssetDatabase.LoadAssetAtPath<Material>(path);
         if (material == null)
         {
-            material = new Material(shader) { name = "RechercheGlow" };
-            AssetDatabase.CreateAsset(material, MaterialPath);
+            material = new Material(shader) { name = materialName };
+            AssetDatabase.CreateAsset(material, path);
         }
 
         material.shader = shader;
-        material.SetColor("_GlowColor", GlowColor);
-        material.SetFloat("_Opacity", GlowOpacity);
+        material.SetColor("_FogColor", FogColor);
+        material.SetFloat("_Opacity", FogOpacity);
+        material.SetFloat("_Radius", ViewRadius / CoverSize);
+        material.SetColor("_DeepColor", DeepColor);
+        material.SetColor("_MistColor", MistColor);
+        material.SetColor("_ShadowColor", ShadowColor);
+        material.SetFloat("_Scroll", 0f);
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssets();
         return material;
+    }
+
+    private static void UpdatePrefab(Material glowMaterial)
+    {
+        var root = PrefabUtility.LoadPrefabContents(PrefabPath);
+        var visual = root.transform.Find("Visual").GetComponent<SpriteRenderer>();
+        visual.color = new Color(0.55f, 0.64f, 0.72f, 1f);
+        visual.sortingOrder = 10;
+        visual.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+
+        var glowObject = root.transform.Find("RechercheGlow");
+        var glowRenderer = glowObject.GetComponent<SpriteRenderer>();
+        glowRenderer.sharedMaterial = glowMaterial;
+        glowRenderer.color = Color.white;
+        glowRenderer.sortingOrder = 1;
+
+        var glow = glowObject.GetComponent<RechercheGlow>();
+        var data = new SerializedObject(glow);
+        data.FindProperty("fogColor").colorValue = FogColor;
+        data.FindProperty("opacity").floatValue = FogOpacity;
+        data.FindProperty("coverSize").floatValue = CoverSize;
+        data.FindProperty("viewRadius").floatValue = ViewRadius;
+        data.ApplyModifiedPropertiesWithoutUndo();
+
+        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+        PrefabUtility.UnloadPrefabContents(root);
+    }
+
+    private static Camera UpdateScene(Material seaMaterial)
+    {
+        var scene = EditorSceneManager.OpenScene(ScenePath);
+        var backdrop = GameObject.Find("Backdrop");
+        var backdropRenderer = backdrop.GetComponent<SpriteRenderer>();
+        backdropRenderer.sharedMaterial = seaMaterial;
+        backdropRenderer.color = Color.white;
+        backdropRenderer.sortingOrder = -10;
+        if (backdrop.GetComponent<DeepSeaBackdrop>() == null)
+            backdrop.AddComponent<DeepSeaBackdrop>();
+
+        var camera = Camera.main;
+        camera.backgroundColor = FogColor;
+        var visual = GameObject.Find("MC").transform.Find("Visual").GetComponent<SpriteRenderer>();
+        visual.color = new Color(0.55f, 0.64f, 0.72f, 1f);
+        visual.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        EditorSceneManager.SaveScene(scene);
+        return camera;
+    }
+
+    private static void VerifyVision(Camera camera)
+    {
+        var character = GameObject.Find("MC");
+        var glow = character.transform.Find("RechercheGlow");
+        InvokeInstance(glow.GetComponent<RechercheGlow>(), "ApplyAppearance");
+        if (glow.parent != character.transform || glow.localPosition.sqrMagnitude > 0.0001f)
+            throw new InvalidOperationException("The vision glow is not centered on MC.");
+        if (glow.GetComponent<SpriteRenderer>().sortingOrder >= character.transform.Find("Visual").GetComponent<SpriteRenderer>().sortingOrder)
+            throw new InvalidOperationException("The fog must render below the character.");
+
+        var origin = Capture(camera, "deep-sea-origin.png");
+        var inside = Sample(origin, camera, character.transform.position + new Vector3(2.2f, 0f, 0f));
+        var outside = Sample(origin, camera, character.transform.position + new Vector3(0f, 5.5f, 0f));
+        Debug.Log("Deep sea samples inside " + inside + " outside " + outside);
+        if (Luminance(inside) < Luminance(outside) + 0.05f)
+            throw new InvalidOperationException("The circle around MC is not clearer than the surrounding sea.");
+
+        var start = character.transform.position;
+        character.transform.position = start + new Vector3(3f, 0f, 0f);
+        InvokeInstance(glow.GetComponent<RechercheGlow>(), "ApplyAppearance");
+        if (Vector3.Distance(glow.position, character.transform.position) > 0.05f)
+            throw new InvalidOperationException("The fog quad is not parented to MC.");
+
+        var moved = Capture(camera, "deep-sea-moved.png");
+        var leftBehind = Sample(moved, camera, start + new Vector3(-2f, 0f, 0f));
+        var withCharacter = Sample(moved, camera, character.transform.position + new Vector3(1.5f, 0f, 0f));
+        character.transform.position = start;
+        EditorSceneManager.SaveScene(character.scene);
+        Debug.Log("Moved samples left behind " + leftBehind + " with character " + withCharacter);
+        if (Luminance(withCharacter) < Luminance(leftBehind) + 0.05f)
+            throw new InvalidOperationException("The clear circle did not stay with MC.");
     }
 
     private static GameObject CreatePrefab(Material glowMaterial)
@@ -291,7 +482,7 @@ public static class RechercheGlowShaderBuilder
         AssertGlowShape(camera, cyan, glowObject, "cyan");
 
         var glowData = new SerializedObject(glow);
-        glowData.FindProperty("glowColor").colorValue = new Color(1f, 0.05f, 0.05f, 1f);
+        glowData.FindProperty("fogColor").colorValue = FogColor;
         glowData.FindProperty("opacity").floatValue = 1f;
         glowData.ApplyModifiedPropertiesWithoutUndo();
         InvokeInstance(glow, "ApplyAppearance");
@@ -303,8 +494,8 @@ public static class RechercheGlowShaderBuilder
                 "Changing the glow color in the inspector did not change the rendered halo. Center " + redCenter);
         }
 
-        glowData.FindProperty("glowColor").colorValue = GlowColor;
-        glowData.FindProperty("opacity").floatValue = GlowOpacity;
+        glowData.FindProperty("fogColor").colorValue = FogColor;
+        glowData.FindProperty("opacity").floatValue = FogOpacity;
         glowData.ApplyModifiedPropertiesWithoutUndo();
         InvokeInstance(glow, "ApplyAppearance");
         EditorSceneManager.SaveScene(camera.gameObject.scene);
@@ -387,20 +578,33 @@ public static class RechercheGlowShaderBuilder
         return color.r * 0.2126f + color.g * 0.7152f + color.b * 0.0722f;
     }
 
-    private static ColorShaderProperty CreateColorProperty()
+    private static ColorShaderProperty AddColor(Assembly shaderGraph, Type graphType, object graph, string name, Color color)
     {
         var property = (ColorShaderProperty)Activator.CreateInstance(typeof(ColorShaderProperty), true);
-        property.displayName = "GlowColor";
-        property.value = GlowColor;
+        property.displayName = name;
+        property.value = color;
+        Invoke(graphType, graph, "AddGraphInput", property, -1);
         return property;
     }
 
-    private static Vector1ShaderProperty CreateOpacityProperty()
+    private static Vector1ShaderProperty AddFloat(Assembly shaderGraph, Type graphType, object graph, string name, float value)
     {
         var property = (Vector1ShaderProperty)Activator.CreateInstance(typeof(Vector1ShaderProperty), true);
-        property.displayName = "Opacity";
-        property.value = GlowOpacity;
+        property.displayName = name;
+        property.value = value;
+        Invoke(graphType, graph, "AddGraphInput", property, -1);
         return property;
+    }
+
+    private static void RequireNames(params object[] names)
+    {
+        for (var index = 0; index < names.Length; index += 2)
+        {
+            var property = (UnityEditor.ShaderGraph.Internal.ShaderInput)names[index];
+            var expected = (string)names[index + 1];
+            if (property.referenceName != expected)
+                throw new InvalidOperationException("Expected " + expected + " but got " + property.referenceName);
+        }
     }
 
     private static Array CreateSpriteBlocks(Assembly shaderGraph)
@@ -435,6 +639,9 @@ public static class RechercheGlowShaderBuilder
     private static object CreateNode(Assembly shaderGraph, Type graphType, object graph, string typeName)
     {
         var node = Activator.CreateInstance(shaderGraph.GetType(typeName));
+        var latestVersion = node.GetType().GetProperty("latestVersion");
+        if (latestVersion != null)
+            FindField(node.GetType(), "m_SGVersion")?.SetValue(node, latestVersion.GetValue(node));
         Invoke(graphType, graph, "AddNode", node, false);
         return node;
     }

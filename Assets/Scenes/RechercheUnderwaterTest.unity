@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 35383380}
   - component: {fileID: 35383379}
+  - component: {fileID: 35383381}
   m_Layer: 0
   m_Name: Backdrop
   m_TagString: Untagged
@@ -162,7 +163,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 9e0e26936b7772840b9b967e61bd37da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -186,7 +187,7 @@ SpriteRenderer:
   m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0.7490196, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -211,6 +212,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &35383381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35383378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc3158ffb7e62064eb2c23690b6928cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeepSeaBackdrop
+  scrollSpeed: 0.015
 --- !u!1001 &402014143
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -220,19 +234,31 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
+      propertyPath: size.x
+      value: 6.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
+      propertyPath: size.y
+      value: 5.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
       propertyPath: opacity
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
-      propertyPath: glowColor.b
-      value: 0
+      propertyPath: viewRadius
+      value: 2.62
       objectReference: {fileID: 0}
-    - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
-      propertyPath: glowColor.g
-      value: 0
+    - target: {fileID: 2270503544132449575, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 30
       objectReference: {fileID: 0}
-    - target: {fileID: 885534147999723198, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
-      propertyPath: glowColor.r
+    - target: {fileID: 2270503544132449575, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270503544132449575, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3773085566109499654, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
@@ -245,15 +271,15 @@ PrefabInstance:
       objectReference: {fileID: 1914233038}
     - target: {fileID: 8371364717540577185, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.72
       objectReference: {fileID: 0}
     - target: {fileID: 8371364717540577185, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.64
       objectReference: {fileID: 0}
     - target: {fileID: 8371364717540577185, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 9119702377985804614, guid: 140a8d6017cc3a24fb1941aa567559e5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -329,7 +355,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.012, g: 0.04, b: 0.07, a: 1}
+  m_BackGroundColor: {r: 0.012, g: 0.028, b: 0.05, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
